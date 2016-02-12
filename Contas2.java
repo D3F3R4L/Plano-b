@@ -81,6 +81,7 @@ public class JavaApplication6 {
                 System.out.println("Nome do titular: " + conta.getCliente());
                 System.out.println("Numero da conta: " + conta.getNum_Conta());
                 System.out.println("Saldo atual: " + conta.getSaldo());
+                System.out.println("Saldo atual na poupança: " + contapopança.getsaldopopanca());
                 System.out.println("Dia de rendimanto: "+contapopança.getdiaderendimento());
                 System.out.println("Limite de credito: " + contaespecial.getlimite()+"\n");
             }
