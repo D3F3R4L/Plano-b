@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Lista2;
+package javaapplication6;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -13,23 +13,27 @@ import javax.swing.JOptionPane;
  *
  * @author Notebook
  */
-public class Contas {
+public class JavaApplication6 {
     public static void main(String[] args) {
         Object resposta;
         String c = JOptionPane.showInputDialog("Digite o nome do titular da conta");
         int n = Integer.parseInt(JOptionPane.showInputDialog("Digite o numero da conta"));
         float s = Float.parseFloat(JOptionPane.showInputDialog("Digite o saldo inicial"));
         contabancaria conta = new contabancaria(c,n,s);
-        contapopança contapopança = new contapopança(c,n,s);
+        contapopanÃ§a contapopanÃ§a = new contapopanÃ§a(c,n,s);
         contaespecial contaespecial = new contaespecial(c,n,s);
+        contapopanÃ§a.setsaldopopanca(Float.parseFloat(JOptionPane.showInputDialog("Digite o valor que queres tranferir para a poupanÃ§a ")));
         contaespecial.setlimite(2000);
         while (conta.getSaldo() < 0) {
             conta.setSaldo(Float.parseFloat(JOptionPane.showInputDialog("Saldo inicial invalido, digite novamente")));
         }
+        while (conta.getSaldo() < contapopanÃ§a.getsaldopopanca()|| contapopanÃ§a.getsaldopopanca()<0) {
+            contapopanÃ§a.setsaldopopanca(Float.parseFloat(JOptionPane.showInputDialog("Saldo da poupanÃ§a maior que o saldo bancario ou valor invalido, digite novamente")));
+        }
         int resp = 0;
         while (resp==0) {
-            String[] opcoes = {"Saque", "Deposito", "Conferir popança", "informações da conta"};
-            resposta = JOptionPane.showInputDialog(null, "Qual operação deseja fazer?", "Escolha", JOptionPane.QUESTION_MESSAGE, null, opcoes, null);
+            String[] opcoes = {"Saque", "Deposito", "Conferir popanÃ§a", "informaÃ§Ãµes da conta","Tranferencia Bancaria","Tranferir dinheiro para popanÃ§a","Retirar dinheiro da popanÃ§a"};
+            resposta = JOptionPane.showInputDialog(null, "Qual operaÃ§Ã£o deseja fazer?", "Escolha", JOptionPane.QUESTION_MESSAGE, null, opcoes, null);
             if (resposta == "Saque") {
                 if (JOptionPane.showConfirmDialog(null, "Deseja utilizar o limite da conta?", "", 0, 1) == 0) {
                     conta.setSaldo(contaespecial.sacar(Float.parseFloat(JOptionPane.showInputDialog("Digite o valor do saque"))));
@@ -40,19 +44,31 @@ public class Contas {
             if (resposta == "Deposito") {
                 conta.setSaldo(conta.depositar(Float.parseFloat(JOptionPane.showInputDialog("Digite o valor do deposito"))));
             }
-            if (resposta == "Conferir popança") {
-                
-                conta.setSaldo(contapopança.calcularnovosaldo());
+            if (resposta == "Conferir popanÃ§a") {
+                contapopanÃ§a.setsaldopopanca(contapopanÃ§a.calcularnovosaldo());
             }
-            if (resposta == "informações da conta") {
+            if (resposta == "Tranferencia Bancaria") {
+                if (JOptionPane.showConfirmDialog(null, "Deseja utilizar o limite da conta?", "", 0, 1) == 0) {
+                    conta.setSaldo(contaespecial.transferenciabancaria(Float.parseFloat(JOptionPane.showInputDialog("Digite o valor da tranferencia entre contas"))));
+                } else {
+                    conta.setSaldo(conta.transferenciabancaria(Float.parseFloat(JOptionPane.showInputDialog("Digite o valor da tranferencia entre contas"))));
+                }
+            }
+            if (resposta == "Tranferir dinheiro para popanÃ§a") {
+                contapopanÃ§a.setsaldopopanca(contapopanÃ§a.aumentarpopanca(Float.parseFloat(JOptionPane.showInputDialog("Digite o valor do acrescimo"))));
+            }
+            if (resposta == "Retirar dinheiro da popanÃ§a") {
+                contapopanÃ§a.setsaldopopanca(contapopanÃ§a.diminuirpopanca(Float.parseFloat(JOptionPane.showInputDialog("Digite o valor do decrescimo"))));
+            }
+            if (resposta == "informaÃ§Ãµes da conta") {
                 System.out.println("Dados do titular");
                 System.out.println("Nome do titular: " + conta.getCliente());
                 System.out.println("Numero da conta: " + conta.getNum_Conta());
                 System.out.println("Saldo atual: " + conta.getSaldo());
-                System.out.println("Dia de rendimanto: "+contapopança.getdiaderendimento());
+                System.out.println("Dia de rendimanto: "+contapopanÃ§a.getdiaderendimento());
                 System.out.println("Limite de credito: " + contaespecial.getlimite()+"\n");
             }
-            resp=JOptionPane.showConfirmDialog(null, "Deseja fazer outra operação?", "", 0, 1);
+            resp=JOptionPane.showConfirmDialog(null, "Deseja fazer outra operaÃ§Ã£o?", "", 0, 1);
         }
     }
 }
@@ -94,7 +110,7 @@ class contabancaria {
             saque = Float.parseFloat(JOptionPane.showInputDialog("Valor invalido ou superior ao seu saldo,por favor digite novamente"));
         }
         this.saldo -= saque;
-        JOptionPane.showMessageDialog(null, "Você ainda tem: " + saldo);
+        JOptionPane.showMessageDialog(null, "VocÃª ainda tem: " + saldo);
         return saldo;
     }
 
@@ -103,28 +119,61 @@ class contabancaria {
             deposito = Float.parseFloat(JOptionPane.showInputDialog("Valor invalido,por favor digite novamente"));
         }
         this.saldo += deposito;
-        JOptionPane.showMessageDialog(null, "Você ainda tem: " + saldo);
+        JOptionPane.showMessageDialog(null, "VocÃª ainda tem: " + saldo);
+        return saldo;
+    }
+    float transferenciabancaria(float deposito){
+        while (deposito < 0 || deposito > saldo) {
+            deposito = Float.parseFloat(JOptionPane.showInputDialog("Valor invalido ou superior ao seu saldo,por favor digite novamente"));
+        }
+        saldo-=deposito;
+        JOptionPane.showMessageDialog(null, "VocÃª ainda tem: " + saldo);
         return saldo;
     }
 }
 
-class contapopança extends contabancaria {
-    public contapopança(String cliente,int num_conta,float saldo){
+class contapopanÃ§a extends contabancaria {
+    public contapopanÃ§a(String cliente,int num_conta,float saldo){
     super(cliente, num_conta,saldo);
 }
     SimpleDateFormat data = new SimpleDateFormat("dd");
-    private int diaderendimento=10;
+    private float saldopopanca;
+    private final int diaderendimento=10;
     int getdiaderendimento(){
         return diaderendimento;
     }
+    float getsaldopopanca(){
+        return saldopopanca;
+    }
+    void setsaldopopanca(float valor){
+        this.saldopopanca=valor;
+    }
     float calcularnovosaldo() {
         if (data.format(Calendar.getInstance().getTime()).equals(String.valueOf(diaderendimento))) {
-            super.setSaldo(super.getSaldo()*0.05f + super.getSaldo());
-            JOptionPane.showMessageDialog(null, "Dia de rendimento, você agora possui " + super.getSaldo());
+            saldopopanca+=saldopopanca*0.05;
+            JOptionPane.showMessageDialog(null, "Dia de rendimento, vocÃª agora possui " + saldopopanca);
         }
         else
-            JOptionPane.showMessageDialog(null, "Hoje não é o dia de rendimento, seu saldo ainda é " + super.getSaldo());
-        return super.getSaldo();
+            JOptionPane.showMessageDialog(null, "Hoje nÃ£o Ã© o dia de rendimento, seu saldo ainda Ã© " + super.getSaldo());
+        return saldopopanca;
+    }
+    float aumentarpopanca(float valor){
+        while (valor < 0 || valor > super.getSaldo()) {
+            valor =Float.parseFloat(JOptionPane.showInputDialog("Valor invalido ou superior ao seu saldo,por favor digite novamente"));
+        }
+        super.setSaldo(super.getSaldo()-valor);
+        saldopopanca+=valor;
+        JOptionPane.showMessageDialog(null, "VocÃª ainda tem na poupanÃ§a: " + saldopopanca);
+        return saldopopanca;
+    }
+    float diminuirpopanca(float valor){
+        while (valor < 0 || valor > saldopopanca) {
+            JOptionPane.showInputDialog("Valor invalido ou superior ao seu saldo na poupanÃ§a,por favor digite novamente");
+        }
+        saldopopanca-=valor;
+        super.setSaldo(super.getSaldo()+valor);
+        JOptionPane.showMessageDialog(null, "VocÃª ainda tem na poupanÃ§a: " + saldopopanca);
+        return saldopopanca;
     }
 }
 
@@ -148,7 +197,16 @@ class contaespecial extends contabancaria {
             saque = Float.parseFloat(JOptionPane.showInputDialog("Valor invalido ou superior ao seu saldo e limite,por favor digite novamente"));
         }
         super.setSaldo(super.getSaldo()-saque);
-        JOptionPane.showMessageDialog(null, "Você ainda tem: " + super.getSaldo());
+        JOptionPane.showMessageDialog(null, "VocÃª ainda tem: " + super.getSaldo());
+        return super.getSaldo();
+    }
+    @Override
+    float transferenciabancaria(float deposito){
+        while (deposito < 0 || deposito > super.getSaldo()+limite) {
+            deposito=Float.parseFloat(JOptionPane.showInputDialog("Valor invalido ou superior ao seu saldo,por favor digite novamente"));
+        }
+        super.setSaldo(super.getSaldo()-deposito);
+        JOptionPane.showMessageDialog(null, "VocÃª ainda tem: " + super.getSaldo());
         return super.getSaldo();
     }
 }
