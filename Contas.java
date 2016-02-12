@@ -18,32 +18,24 @@ public class Contas {
         Object resposta;
         String c = JOptionPane.showInputDialog("Digite o nome do titular da conta");
         
-        try{
+       
         int n = Integer.parseInt(JOptionPane.showInputDialog("Digite o numero da conta"));
-        }
-        catch (Exception e){
-        	System.out.println("Erro na conversao do tipo inteiro.");
-        }
 
-        try{
+       
         float s = Float.parseFloat(JOptionPane.showInputDialog("Digite o saldo inicial"));
-        }
-        catch (Exception e){
-        	System.out.println("Erro na conversao do tipo float.");
-        }
+
         contabancaria conta = new contabancaria(c,n,s);
         contapopança contapopança = new contapopança(c,n,s);
         contaespecial contaespecial = new contaespecial(c,n,s);
         contaespecial.setlimite(2000);
+        
         while (conta.getSaldo() < 0) {
 
-        	try{
+
             conta.setSaldo(Float.parseFloat(JOptionPane.showInputDialog("Saldo inicial invalido, digite novamente")));
-        	}
-        	catch (Exception e){
-        		System.out.println("Erro na conversao do tipo float.");
-        	}
+
         }
+
         int resp = 0;
         while (resp==0) {
             String[] opcoes = {"Saque", "Deposito", "Conferir popança", "informações da conta"};
